@@ -1,0 +1,14 @@
+image:
+  repository: ghcr.io/woicw/raven-app
+  # Overridden per deploy by the Raven k8s-deploy plugin (values.image.tag).
+  tag: latest
+  # The Raven flow pre-pulls the image onto the k8s host (k3s --docker shares
+  # the host dockerd image store), so IfNotPresent never hits the network.
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: NodePort
+  port: 3000
+  nodePort: 30080

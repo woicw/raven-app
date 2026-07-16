@@ -1,0 +1,9 @@
+# Packaged by raven-build.yml with --version 0.1.0-<image_tag> (semver
+# prerelease encoding the image tag) and --app-version <image_tag>, then
+# pushed as an OCI chart to ghcr.io/<owner>/raven-app/raven-app.
+apiVersion: v2
+name: raven-app
+description: Minimal chart for the raven-app Next.js E2E test target
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

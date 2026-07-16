@@ -70,5 +70,18 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Chart version encodes the image tag as a semver prerelease so every
+      # build gets an immutable chart aligned with its image. Pushed under the
+      # repo-name path so GITHUB_TOKEN's package permission applies.
+      - name: Package and push helm chart
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
+          helm package helm/raven-app --version "0.1.0-${TAG}" --app-version "${TAG}"
+          helm push "raven-app-0.1.0-${TAG}.tgz" "oci://ghcr.io/${{ github.repository_owner }}/raven-app"
+
       - name: Report image
-        run: echo "Pushed ghcr.io/${{ github.repository_owner }}/raven-app:${{ steps.tag.outputs.tag }}"
+        run: |
+          echo "Pushed ghcr.io/${{ github.repository_owner }}/raven-app:${{ steps.tag.outputs.tag }}"
+          echo "Pushed oci://ghcr.io/${{ github.repository_owner }}/raven-app/raven-app:0.1.0-${{ steps.tag.outputs.tag }}"
