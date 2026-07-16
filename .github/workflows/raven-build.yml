@@ -48,6 +48,9 @@ jobs:
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
@@ -55,16 +58,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # The puller host runs docker 1.13.1, which predates OCI manifests and can
-      # only pull Docker schema-2 images. buildx's default OCI/provenance output
-      # is unpullable there ("image not found"), so build with the legacy builder
-      # (DOCKER_BUILDKIT=0) + classic `docker push`, which emit a schema-2
-      # manifest. Single-arch linux/amd64 matches the puller host (x86_64).
-      - name: Build and push (schema-2 for the old-docker puller)
-        env:
-          DOCKER_BUILDKIT: "0"
-        run: |
-          img="ghcr.io/${{ github.repository_owner }}/raven-app:${{ steps.tag.outputs.tag }}"
-          docker build -t "$img" .
-          docker push "$img"
-          echo "Pushed $img"
+      # Single-arch linux/amd64 matches the puller host (x86_64). The puller now
+      # runs docker 24, so the default buildx OCI/provenance output pulls fine.
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/raven-app:${{ steps.tag.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Report image
+        run: echo "Pushed ghcr.io/${{ github.repository_owner }}/raven-app:${{ steps.tag.outputs.tag }}"
