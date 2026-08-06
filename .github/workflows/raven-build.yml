@@ -76,10 +76,38 @@ jobs:
       - name: Package and push helm chart
         env:
           TAG: ${{ steps.tag.outputs.tag }}
+          IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/raven-app
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
           helm package helm/raven-app --version "0.1.0-${TAG}" --app-version "${TAG}"
           helm push "raven-app-0.1.0-${TAG}.tgz" "oci://ghcr.io/${{ github.repository_owner }}/raven-app"
+
+          mkdir -p raven-delivery-manifest
+          jq -n \
+            --arg image "${IMAGE_REPOSITORY}:${TAG}" \
+            --arg chart "oci://ghcr.io/${{ github.repository_owner }}/raven-app/raven-app" \
+            --arg version "0.1.0-${TAG}" \
+            --arg repository "${IMAGE_REPOSITORY}" \
+            --arg tag "${TAG}" \
+            '{
+              schema_version: 1,
+              images: [{name: "raven-app", ref: $image}],
+              chart: {ref: $chart, version: $version},
+              values: {
+                image: {
+                  repository: $repository,
+                  tag: $tag,
+                  pullPolicy: "IfNotPresent"
+                }
+              }
+            }' > raven-delivery-manifest/delivery-manifest.json
+
+      - name: Upload Raven delivery manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: raven-delivery-manifest
+          path: raven-delivery-manifest/delivery-manifest.json
+          if-no-files-found: error
 
       - name: Report image
         run: |
