@@ -3,24 +3,102 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --surface: #ffffff;
+  --surface-hover: #f4f4f5;
+  --muted: #52525b;
+  --border: #e4e4e7;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --surface: #18181b;
+  --surface-hover: #27272a;
+  --muted: #d4d4d8;
+  --border: #3f3f46;
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #fafafa;
+    --surface: #18181b;
+    --surface-hover: #27272a;
+    --muted: #d4d4d8;
+    --border: #3f3f46;
+    color-scheme: dark;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--surface);
+  color: var(--foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0.625rem 0.875rem;
+  transition: background-color 150ms ease, border-color 150ms ease,
+    color 150ms ease;
+}
+
+.theme-toggle:hover {
+  background: var(--surface-hover);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.theme-toggle__icon {
+  font-size: 1.125rem;
+  line-height: 0.75;
+}
+
+.theme-toggle__current {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.theme-toggle__current--dark {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle__current--light {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle__current--dark {
+  display: inline-flex;
+}
+
+:root[data-theme="dark"] .theme-sensitive-logo {
+  filter: invert(1);
 }
