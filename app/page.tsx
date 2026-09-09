@@ -14,12 +14,20 @@ export default function Home() {
           Discover how Codex supports the software-development work that moves
           your projects forward.
         </p>
-        <Link
-          className="mt-8 inline-flex items-center justify-center rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
-          href="/codex"
-        >
-          Explore Codex
-        </Link>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Link
+            className="inline-flex items-center justify-center rounded-full bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+            href="/codex"
+          >
+            Explore Codex
+          </Link>
+          <Link
+            className="inline-flex items-center justify-center rounded-full border border-zinc-300 px-5 py-3 text-sm font-semibold text-zinc-900 transition-colors hover:border-zinc-400 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:border-zinc-700 dark:text-zinc-100 dark:hover:border-zinc-600 dark:hover:bg-zinc-900"
+            href="/deepseek"
+          >
+            Discover DeepSeek
+          </Link>
+        </div>
       </section>
     </main>
   );
